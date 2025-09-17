@@ -1,0 +1,178 @@
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { Home, Map, AlertTriangle, BookOpen, User, Menu, Bell } from "lucide-react";
+//import { User as UserEntity } from "@/entities/User";
+
+const navigationItems = [
+  {
+    title: "Home",
+    url: createPageUrl("Home"),
+    icon: Home,
+    activeColor: "text-blue-600",
+  },
+  {
+    title: "Map",
+    url: createPageUrl("Map"),
+    icon: Map,
+    activeColor: "text-blue-600",
+  },
+  {
+    title: "Alerts",
+    url: createPageUrl("Alerts"),
+    icon: AlertTriangle,
+    activeColor: "text-red-600",
+  },
+  {
+    title: "Resources",
+    url: createPageUrl("Resources"),
+    icon: BookOpen,
+    activeColor: "text-green-600",
+  },
+  {
+    title: "Profile",
+    url: createPageUrl("Profile"),
+    icon: User,
+    activeColor: "text-purple-600",
+  },
+];
+
+export default function Layout({ children, currentPageName }) {
+  const location = useLocation();
+  //const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState("light");
+
+  // useEffect(() => {
+  //   loadUser();
+  // }, []);
+
+  // const loadUser = async () => {
+//     try {
+//       const currentUser = await UserEntity.me();
+//       setUser(currentUser);
+//       if (currentUser.preferences?.theme) {
+//         setTheme(currentUser.preferences.theme);
+//       }
+//     } catch (error) {
+//       // User not logged in
+//     }
+//   };
+
+  return (
+    <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+      <style>{`
+        :root {
+          --primary-blue: #1E40AF;
+          --alert-red: #DC2626;
+          --safe-green: #059669;
+          --warning-amber: #D97706;
+        }
+        
+        .dark {
+          --primary-blue: #3B82F6;
+          --alert-red: #EF4444;
+          --safe-green: #10B981;
+          --warning-amber: #F59E0B;
+        }
+        
+        .premium-gradient {
+          background: linear-gradient(135deg, var(--primary-blue), #3B82F6);
+        }
+        
+        .glass-effect {
+          backdrop-filter: blur(20px);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .floating-shadow {
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        @keyframes pulse-safe {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        .pulse-safe {
+          animation: pulse-safe 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+      `}</style>
+
+      {/* Status Bar Simulation */}
+      <div className={`h-1 w-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`} />
+
+      {/* Header */}
+      <header className={`sticky top-0 z-50 ${theme === 'dark' ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg border-b border-gray-200/20`}>
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 premium-gradient rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">TS</span>
+            </div>
+            <div>
+              <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                TouristSafe
+              </h1>
+              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                Your Safety Companion
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Bell className={`w-6 h-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
+            </div>
+            <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 pb-20">
+        {children}
+      </main>
+
+      {/* Bottom Navigation */}
+      <nav className={`fixed bottom-0 left-0 right-0 z-50 ${theme === 'dark' ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg border-t border-gray-200/20`}>
+        <div className="flex items-center justify-around px-2 py-3">
+          {navigationItems.map((item) => {
+            const isActive = location.pathname === item.url;
+            const Icon = item.icon;
+            
+            return (
+              <Link
+                key={item.title}
+                to={item.url}
+                className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+              >
+                <div className={`transition-all duration-200 ${isActive ? 'scale-110' : ''}`}>
+                  <Icon 
+                    className={`w-6 h-6 ${
+                      isActive 
+                        ? item.activeColor 
+                        : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`} 
+                  />
+                </div>
+                <span 
+                  className={`text-xs font-medium transition-colors duration-200 ${
+                    isActive 
+                      ? item.activeColor
+                      : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }`}
+                >
+                  {item.title}
+                </span>
+                {isActive && (
+                  <div className={`w-1 h-1 rounded-full ${item.activeColor.replace('text-', 'bg-')} mt-1`} />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
+  );
+}
