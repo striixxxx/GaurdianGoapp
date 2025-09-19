@@ -13,10 +13,32 @@ export default function ChatBot() {
     const newMessages = [...messages, { sender: "user", text: input }];
     setMessages(newMessages);
 
+    try {
+    // Get location
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+
+    const { latitude, longitude } = position.coords;
+    
+    const res = await fetch("http://localhost:5000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: input }),
+    });
+
+    const data = await res.json();
     // TODO: replace with your backend API call (AI + Places API)
-    const reply = `I found some cool places near you related to "${input}". 🌍`;
+    const reply = data.reply || "⚠️ No response from AI";
 
     setMessages([...newMessages, { sender: "bot", text: reply }]);
+    } catch (err) {
+    console.error(err);
+    setMessages([
+      ...newMessages,
+      { sender: "bot", text: "⚠️ Error reaching AI server" },
+    ]);
+  }
     setInput("");
   };
 
