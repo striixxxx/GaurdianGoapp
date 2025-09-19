@@ -21,7 +21,7 @@ export default function ChatBot() {
 
     const { latitude, longitude } = position.coords;
     
-    const res = await fetch("http://localhost:5000/chat", {
+    const res = await fetch("http://localhost:8000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: input }),
