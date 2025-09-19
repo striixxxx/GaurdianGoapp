@@ -2,6 +2,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
+import ChatBot from "./components/shared/Chatbot.jsx";
 
 // ✅ Pages
 import Home from "./Pages/Home";
@@ -21,6 +22,7 @@ function App() {
       <Layout>
         {/* Global panic button always visible */}
         <PanicButton />
+        <ChatBot /> 
 
         {/* Define page routes */}
         <Routes>
