@@ -1,0 +1,210 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { Alert } from "@/entities/Alert";
+import { AlertTriangle, CheckCircle, Clock, MapPin } from "lucide-react";
+import { format } from "date-fns";
+
+export default function Alerts() {
+  const [alerts, setAlerts] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Mock alerts for demo mode
+  const mockAlerts = [
+    {
+      id: 1,
+      alert_type: "geofence",
+      severity: "medium",
+      location: {
+        latitude: 19.0760,
+        longitude: 72.8777,
+        address: "Colaba Market, Mumbai"
+      },
+      description: "Tourist entered caution zone - increased vigilance recommended",
+      status: "resolved",
+      response_time: 45,
+      contacts_notified: ["emergency_services"],
+      created_date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 2,
+      alert_type: "anomaly",
+      severity: "low",
+      location: {
+        latitude: 19.0728,
+        longitude: 72.8826,
+        address: "Marine Drive, Mumbai"
+      },
+      description: "No activity detected for 2 hours - safety check initiated",
+      status: "resolved",
+      response_time: 120,
+      contacts_notified: ["emergency_contacts"],
+      created_date: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 3,
+      alert_type: "sos",
+      severity: "critical",
+      location: {
+        latitude: 19.0596,
+        longitude: 72.8295,
+        address: "Taj Mahal Palace Hotel, Mumbai"
+      },
+      description: "Emergency SOS activated by tourist - immediate assistance required",
+      status: "active",
+      response_time: 30,
+      contacts_notified: ["police", "medical", "emergency_contacts"],
+      created_date: new Date(Date.now() - 30 * 60 * 1000).toISOString()
+    }
+  ];
+
+  const loadAlerts = useCallback(async () => {
+    try {
+      const alertsList = await Alert.list("-created_date");
+      setAlerts(alertsList);
+      setError(null);
+    } catch (error) {
+      console.log("Using demo alerts due to network error");
+      setAlerts(mockAlerts);
+      setError("Demo mode - showing sample data");
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadAlerts();
+  }, [loadAlerts]);
+
+  const getSeverityColor = (severity) => {
+    switch (severity) {
+      case "critical": return "text-red-600 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800";
+      case "high": return "text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800";
+      case "medium": return "text-yellow-600 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800";
+      case "low": return "text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800";
+      default: return "text-gray-600 bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700";
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    switch (type) {
+      case "sos": return AlertTriangle;
+      case "geofence": return MapPin;
+      case "anomaly": return Clock;
+      default: return AlertTriangle;
+    }
+  };
+
+  const filteredAlerts = filter === "all" ? alerts : alerts.filter(alert => alert.status === filter);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">Loading alerts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Safety Alerts</h1>
+        
+        {/* Demo Mode Banner */}
+        {error && (
+          <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 mb-4">
+            <p className="text-blue-700 text-sm">{error}</p>
+          </div>
+        )}
+        
+        {/* Filter Tabs */}
+        <div className="flex gap-2 overflow-x-auto">
+          {["all", "active", "resolved"].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-colors whitespace-nowrap ${
+                filter === status
+                  ? "bg-red-100 text-red-600 dark:bg-red-900/30"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+              }`}
+            >
+              {status} {status === "all" ? `(${alerts.length})` : `(${alerts.filter(a => a.status === status).length})`}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Alerts List */}
+      <div className="p-6">
+        {filteredAlerts.length === 0 ? (
+          <div className="text-center py-12">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">All Clear!</h3>
+            <p className="text-gray-500 dark:text-gray-400">No safety alerts at this time.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredAlerts.map((alert) => {
+              const TypeIcon = getTypeIcon(alert.alert_type);
+              
+              return (
+                <div
+                  key={alert.id}
+                  className={`bg-white dark:bg-gray-800 rounded-3xl p-6 border floating-shadow ${getSeverityColor(alert.severity)}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-2xl bg-white dark:bg-gray-700 shadow-sm">
+                        <TypeIcon className="w-6 h-6 text-red-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 dark:text-white capitalize">
+                          {alert.alert_type.replace("_", " ")} Alert
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {format(new Date(alert.created_date), "MMM d, yyyy 'at' HH:mm")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getSeverityColor(alert.severity)}`}>
+                      {alert.severity}
+                    </div>
+                  </div>
+
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">{alert.description}</p>
+
+                  {alert.location && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      <MapPin className="w-4 h-4" />
+                      <span>{alert.location.address || `${alert.location.latitude}, ${alert.location.longitude}`}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <div className={`w-2 h-2 rounded-full ${
+                        alert.status === "active" ? "bg-red-500" : 
+                        alert.status === "resolved" ? "bg-green-500" : "bg-yellow-500"
+                      }`} />
+                      <span className="capitalize">{alert.status}</span>
+                    </div>
+                    
+                    {alert.response_time && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        Response: {alert.response_time}s
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

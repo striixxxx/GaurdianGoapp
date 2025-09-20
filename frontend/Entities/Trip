@@ -1,0 +1,68 @@
+{
+  "name": "Trip",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Trip title or destination"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Trip start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Trip end date"
+    },
+    "destinations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "planned_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "safety_rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          }
+        }
+      }
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of contacts who can track this trip"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "active",
+        "completed",
+        "cancelled"
+      ],
+      "default": "planned"
+    }
+  },
+  "required": [
+    "title",
+    "start_date",
+    "end_date"
+  ]
+}

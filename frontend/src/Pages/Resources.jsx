@@ -5,7 +5,7 @@ export default function Resources() {
   const [selectedCategory, setSelectedCategory] = useState("emergency");
 
   const emergencyContacts = [
-    { name: "Police", number: "100", icon: Shield, color: "text-blue-600" },
+    { name: "Police", number: "112", icon: Shield, color: "text-blue-600" },
     { name: "Medical Emergency", number: "108", icon: Phone, color: "text-red-600" },
     { name: "Fire Service", number: "101", icon: AlertTriangle, color: "text-orange-600" },
     { name: "Tourist Helpline", number: "1363", icon: Phone, color: "text-green-600" },

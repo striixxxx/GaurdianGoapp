@@ -1,0 +1,70 @@
+{
+  "name": "Alert",
+  "type": "object",
+  "properties": {
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "sos",
+        "geofence",
+        "anomaly",
+        "manual"
+      ],
+      "description": "Type of alert triggered"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Alert severity level"
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Alert description or message"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "acknowledged",
+        "resolved"
+      ],
+      "default": "active"
+    },
+    "response_time": {
+      "type": "number",
+      "description": "Response time in seconds"
+    },
+    "contacts_notified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of contacts that were notified"
+    }
+  },
+  "required": [
+    "alert_type",
+    "severity",
+    "location",
+    "description"
+  ]
+}

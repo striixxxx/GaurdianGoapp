@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "./ChatBot.css"; // we'll style it separately
+import botLogo from "@/assets/chatbot.jpg";
+
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false);
@@ -47,8 +49,9 @@ export default function ChatBot() {
       {/* Floating button */}
       {!open && (
         <button className="chatbot-toggle" onClick={() => setOpen(true)}>
-          💬
+          <img src={botLogo} alt="ChatBot" style={{ width: "40px", height: "40px" }} />
         </button>
+
       )}
 
       {/* Popup box */}

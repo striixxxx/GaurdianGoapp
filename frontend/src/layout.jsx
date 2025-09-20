@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, Map, AlertTriangle, BookOpen, User, Menu, Bell } from "lucide-react";
-//import { User as UserEntity } from "@/entities/User";
+import { User as UserEntity } from "@/entities/User";
+import appLogo from "@/assets/logo.png";
+
 
 const navigationItems = [
   {
@@ -39,24 +41,24 @@ const navigationItems = [
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  //const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [theme, setTheme] = useState("light");
 
-  // useEffect(() => {
-  //   loadUser();
-  // }, []);
+  useEffect(() => {
+    loadUser();
+  }, []);
 
-  // const loadUser = async () => {
-//     try {
-//       const currentUser = await UserEntity.me();
-//       setUser(currentUser);
-//       if (currentUser.preferences?.theme) {
-//         setTheme(currentUser.preferences.theme);
-//       }
-//     } catch (error) {
-//       // User not logged in
-//     }
-//   };
+  const loadUser = async () => {
+    try {
+      const currentUser = await UserEntity.me();
+      setUser(currentUser);
+      if (currentUser.preferences?.theme) {
+        setTheme(currentUser.preferences.theme);
+      }
+    } catch (error) {
+      // User not logged in
+    }
+  };
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
@@ -106,12 +108,13 @@ export default function Layout({ children, currentPageName }) {
       <header className={`sticky top-0 z-50 ${theme === 'dark' ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg border-b border-gray-200/20`}>
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 premium-gradient rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">TS</span>
+            <div className="w-22 h-22 rounded-xl overflow-hidden flex items-center justify-center">
+              <img src={appLogo} alt="App Logo" className="w-full h-full object-contain" />
             </div>
+
             <div>
               <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                TouristSafe
+                GuardianGo
               </h1>
               <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                 Your Safety Companion

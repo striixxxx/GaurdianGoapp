@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">tourist-safety-app</string>
+    <string name="title_activity_main">tourist-safety-app</string>
+    <string name="package_name">com.mridul.guardiongo</string>
+    <string name="custom_url_scheme">com.mridul.guardiongo</string>
+</resources>
